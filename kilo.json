@@ -1,0 +1,8 @@
+{
+  "name": "reference-api",
+  "provider": "google-vertex",
+  "model": "gemini-3.5-flash",
+  "permissions": {
+    "dirs": ["."]
+  }
+}

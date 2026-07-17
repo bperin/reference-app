@@ -1,0 +1,59 @@
+# Go build outputs
+/bin/
+/api
+/cmd/api/api
+/cmd/api/api-binary
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Coverage, profiling, and debug artifacts
+coverage.out
+coverage.html
+*.coverprofile
+*.cpu.pprof
+*.mem.pprof
+*.prof
+__debug_bin
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.seed
+
+# Go workspace and vendored dependencies
+vendor/
+go.work
+go.work.sum
+
+# Logs, local databases, and temporary files
+*.log
+*.db
+*.sqlite
+*.sqlite3
+*.tmp
+*.temp
+tmp/
+*.bak
+*~
+
+# IDE, OS, and tool caches
+.DS_Store
+.idea/
+.vscode/*.local.json
+.direnv/
+.cache/
+.golangci-cache/
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

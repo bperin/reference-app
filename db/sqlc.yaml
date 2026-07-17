@@ -1,0 +1,53 @@
+version: '2'
+
+sql:
+  - name: users
+    engine: postgresql
+    schema:
+      - migrations
+    queries:
+      - queries/users.sql
+    gen:
+      go:
+        package: userssqlc
+        out: ../internal/users/repository/sqlc
+        sql_package: pgx/v5
+        emit_interface: true
+        emit_empty_slices: true
+        emit_pointers_for_null_types: true
+        omit_unused_structs: true
+        query_parameter_limit: 0
+
+  - name: auth
+    engine: postgresql
+    schema:
+      - migrations
+    queries:
+      - queries/refresh_tokens.sql
+    gen:
+      go:
+        package: authsqlc
+        out: ../internal/auth/repository/sqlc
+        sql_package: pgx/v5
+        emit_interface: true
+        emit_empty_slices: true
+        emit_pointers_for_null_types: true
+        omit_unused_structs: true
+        query_parameter_limit: 0
+
+  - name: posts
+    engine: postgresql
+    schema:
+      - migrations
+    queries:
+      - queries/posts.sql
+    gen:
+      go:
+        package: postssqlc
+        out: ../internal/posts/repository/sqlc
+        sql_package: pgx/v5
+        emit_interface: true
+        emit_empty_slices: true
+        emit_pointers_for_null_types: true
+        omit_unused_structs: true
+        query_parameter_limit: 0
