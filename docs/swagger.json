@@ -211,6 +211,56 @@
                 }
             }
         },
+        "/events/storage": {
+            "post": {
+                "description": "Endpoint for Eventarc to report finalized GCS uploads. Authenticated via Google OIDC machine tokens.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "content"
+                ],
+                "summary": "Eventarc Cloud Storage Callback",
+                "parameters": [
+                    {
+                        "description": "CloudEvent payload containing GCS bucket and object name",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Upload marked complete"
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorPayload"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorPayload"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorPayload"
+                        }
+                    }
+                }
+            }
+        },
         "/posts/": {
             "get": {
                 "produces": [

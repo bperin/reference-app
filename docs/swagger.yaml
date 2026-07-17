@@ -253,6 +253,40 @@ paths:
       summary: Reserve content upload
       tags:
       - content
+  /events/storage:
+    post:
+      consumes:
+      - application/json
+      description: Endpoint for Eventarc to report finalized GCS uploads. Authenticated
+        via Google OIDC machine tokens.
+      parameters:
+      - description: CloudEvent payload containing GCS bucket and object name
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Upload marked complete
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/response.ErrorPayload'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrorPayload'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/response.ErrorPayload'
+      summary: Eventarc Cloud Storage Callback
+      tags:
+      - content
   /posts/:
     get:
       parameters:

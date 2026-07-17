@@ -25,6 +25,18 @@ type storageEvent struct {
 	Name   string `json:"name"`
 }
 
+// Handle processes Cloud Storage object finalization events via Eventarc.
+// @Summary Eventarc Cloud Storage Callback
+// @Description Endpoint for Eventarc to report finalized GCS uploads. Authenticated via Google OIDC machine tokens.
+// @Tags content
+// @Accept json
+// @Produce json
+// @Param request body map[string]interface{} true "CloudEvent payload containing GCS bucket and object name"
+// @Success 204 "Upload marked complete"
+// @Failure 400 {object} response.ErrorPayload "Invalid request"
+// @Failure 401 {object} response.ErrorPayload "Unauthorized"
+// @Failure 500 {object} response.ErrorPayload "Internal server error"
+// @Router /events/storage [post]
 func (h *EventarcHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	if err := h.verifier.Verify(r); err != nil {
 		response.Error(w, http.StatusUnauthorized, "unauthorized", err.Error())
