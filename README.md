@@ -71,3 +71,44 @@ Each domain registers its own routes. Authentication is applied at the domain
 route group, and handlers use the authenticated user UUID from request context
 instead of rechecking credentials. Auth requests use JSON;
 `POST /auth/oauth/token` accepts `password` and `refresh_token` grants.
+
+## Content Storage & Secure Webhook Flow
+
+The content storage domain allows authenticated clients to reserve storage, upload raw content (such as rich text or images) directly to Google Cloud Storage (GCS) via a signed PUT URL, and have the upload confirmed and reconciled in PostgreSQL via a secure Eventarc webhook.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as Authenticated Client
+    participant API as Reference App API
+    participant GCS as Google Cloud Storage (GCS)
+    participant EA as Eventarc Trigger
+    participant DB as PostgreSQL Database
+
+    User->>API: 1. POST /contents (Reserve Upload) [JWT Bearer Auth]
+    activate API
+    API->>DB: Create 'pending' content record
+    API->>API: Generate GCS Signed PUT URL
+    API-->>User: Return Signed PUT URL & Content Metadata
+    deactivate API
+
+    User->>GCS: 2. PUT /object [Signed GCS URL] (Upload Rich Text/PNG)
+    activate GCS
+    GCS-->>User: 200 OK (Upload finalized)
+    deactivate GCS
+
+    Note over GCS,EA: GCS Object Finalized Event publishes to Pub/Sub
+    GCS->>EA: Trigger Eventarc storage finalization
+
+    activate EA
+    EA->>EA: Generate Google-signed OIDC ID Token
+    EA->>API: 3. POST /events/storage [OIDC Bearer Auth] (Eventarc Webhook)
+    deactivate EA
+
+    activate API
+    API->>API: Verify Google OIDC Token & Bucket Identity
+    API->>GCS: Read Authoritative Object Attributes (MIME, size, generation)
+    API->>DB: Complete content row (Mark 'uploaded', update MIME & size)
+    API-->>EA: 204 No Content
+    deactivate API
+```
