@@ -76,6 +76,8 @@ instead of rechecking credentials. Auth requests use JSON;
 
 The content storage domain allows authenticated clients to reserve storage, upload raw content (such as rich text or images) directly to Google Cloud Storage (GCS) via a signed PUT URL, and have the upload confirmed and reconciled in PostgreSQL via a secure Eventarc webhook.
 
+![Content Storage Flow Diagram](docs/architecture/content-storage-flow.png)
+
 ```mermaid
 sequenceDiagram
     autonumber
