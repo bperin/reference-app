@@ -4,16 +4,19 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/example/reference-app/internal/auth"
 	"github.com/example/reference-app/internal/http/response"
 )
 
-type EventarcHandler struct {
-	service  *Service
-	verifier *auth.EventarcVerifier
+type Verifier interface {
+	Verify(r *http.Request) error
 }
 
-func NewEventarcHandler(service *Service, verifier *auth.EventarcVerifier) *EventarcHandler {
+type EventarcHandler struct {
+	service  *Service
+	verifier Verifier
+}
+
+func NewEventarcHandler(service *Service, verifier Verifier) *EventarcHandler {
 	return &EventarcHandler{service: service, verifier: verifier}
 }
 
