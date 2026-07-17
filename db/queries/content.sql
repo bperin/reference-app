@@ -27,7 +27,7 @@ WHERE id = sqlc.arg(id) AND user_id = sqlc.arg(user_id);
 
 -- name: ListContentChildren :many
 SELECT * FROM content
-WHERE parent_id = sqlc.arg(parent_id)
+WHERE parent_id = sqlc.arg(parent_id) AND user_id = sqlc.arg(user_id)
 ORDER BY created_at DESC
 LIMIT sqlc.arg(result_limit) OFFSET sqlc.arg(result_offset);
 

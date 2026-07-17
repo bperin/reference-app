@@ -51,6 +51,15 @@ definitions:
       token_type:
         type: string
     type: object
+  content.reserveRequest:
+    properties:
+      filename:
+        type: string
+      mime_type:
+        type: string
+      parent_id:
+        type: string
+    type: object
   posts.CreatePostRequest:
     properties:
       content:
@@ -209,6 +218,41 @@ paths:
       summary: Register a user
       tags:
       - auth
+  /contents:
+    post:
+      consumes:
+      - application/json
+      description: Reserves a new content upload with MIME type and hierarchy.
+      parameters:
+      - description: Reservation request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/content.reserveRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Reservation details
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/response.ErrorPayload'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrorPayload'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/response.ErrorPayload'
+      summary: Reserve content upload
+      tags:
+      - content
   /posts/:
     get:
       parameters:

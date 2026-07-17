@@ -213,19 +213,25 @@ func (q *Queries) GetContentByIDAndUser(ctx context.Context, arg GetContentByIDA
 
 const listContentChildren = `-- name: ListContentChildren :many
 SELECT id, user_id, parent_id, project_id, declared_mime_type, effective_mime_type, bucket, object_name, gcs_uri, public_url, upload_status, object_generation, size_bytes, completed_at, created_at, updated_at FROM content
-WHERE parent_id = $1
+WHERE parent_id = $1 AND user_id = $2
 ORDER BY created_at DESC
-LIMIT $3 OFFSET $2
+LIMIT $4 OFFSET $3
 `
 
 type ListContentChildrenParams struct {
 	ParentID     pgtype.UUID
+	UserID       pgtype.UUID
 	ResultOffset int32
 	ResultLimit  int32
 }
 
 func (q *Queries) ListContentChildren(ctx context.Context, arg ListContentChildrenParams) ([]Content, error) {
-	rows, err := q.db.Query(ctx, listContentChildren, arg.ParentID, arg.ResultOffset, arg.ResultLimit)
+	rows, err := q.db.Query(ctx, listContentChildren,
+		arg.ParentID,
+		arg.UserID,
+		arg.ResultOffset,
+		arg.ResultLimit,
+	)
 	if err != nil {
 		return nil, err
 	}

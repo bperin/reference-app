@@ -72,7 +72,7 @@ cloud-migrate:
 	@DATABASE_URL="$$(gcloud secrets versions access latest --project=slap-agent-builder --secret=reference-app-database-url)"; export DATABASE_URL; go run github.com/pressly/goose/v3/cmd/goose@v3.27.2 -dir db/migrations postgres "$$DATABASE_URL" up
 
 swagger:
-	go run github.com/swaggo/swag/cmd/swag@v1.16.6 init --generalInfo main.go --dir ./cmd/api,./internal/auth,./internal/users,./internal/posts,./internal/http/response --output ./docs --parseInternal
+	go run github.com/swaggo/swag/cmd/swag@v1.16.6 init --generalInfo main.go --dir ./cmd/api,./internal/auth,./internal/users,./internal/posts,./internal/http/response,./internal/content --output ./docs --parseInternal
 
 generate: sqlc-check swagger
 

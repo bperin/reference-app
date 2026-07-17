@@ -18,6 +18,10 @@ type Config struct {
 	AccessTokenTTL  time.Duration
 	RefreshTokenTTL time.Duration
 	LogLevel        string
+	GCSBucket        string
+	GCSCredentials   string
+	EventarcAudience string
+	EventarcIssuer   string
 }
 
 // Load loads configuration from environment variables.
@@ -39,15 +43,19 @@ func Load() (*Config, error) {
 	}
 
 	cfg := &Config{
-		AppEnv:          getEnv("APP_ENV", "development"),
-		HTTPAddress:     getEnv("HTTP_ADDRESS", ":8080"),
-		DatabaseURL:     getEnv("DATABASE_URL", ""),
-		JWTSecret:       getEnv("JWT_SECRET", ""),
-		JWTIssuer:       getEnv("JWT_ISSUER", "reference-api"),
-		JWTAudience:     getEnv("JWT_AUDIENCE", "reference-api-clients"),
-		AccessTokenTTL:  accessTokenTTL,
-		RefreshTokenTTL: refreshTokenTTL,
-		LogLevel:        getEnv("LOG_LEVEL", "INFO"),
+		AppEnv:           getEnv("APP_ENV", "development"),
+		HTTPAddress:      getEnv("HTTP_ADDRESS", ":8080"),
+		DatabaseURL:      getEnv("DATABASE_URL", ""),
+		JWTSecret:        getEnv("JWT_SECRET", ""),
+		JWTIssuer:        getEnv("JWTIssuer", "reference-api"),
+		JWTAudience:      getEnv("JWTAudience", "reference-api-clients"),
+		AccessTokenTTL:   accessTokenTTL,
+		RefreshTokenTTL:  refreshTokenTTL,
+		LogLevel:         getEnv("LOG_LEVEL", "INFO"),
+		GCSBucket:        getEnv("GCS_BUCKET", ""),
+		GCSCredentials:   getEnv("GCS_CREDENTIALS", ""),
+		EventarcAudience: getEnv("EVENTARC_AUDIENCE", ""),
+		EventarcIssuer:   getEnv("EVENTARC_ISSUER", ""),
 	}
 
 	if cfg.DatabaseURL == "" {
@@ -56,9 +64,13 @@ func Load() (*Config, error) {
 	if cfg.JWTSecret == "" {
 		return nil, fmt.Errorf("JWT_SECRET is required")
 	}
+	if cfg.GCSBucket == "" {
+		return nil, fmt.Errorf("GCS_BUCKET is required")
+	}
 
 	return cfg, nil
 }
+
 
 // Print logs the configuration with sensitive values redacted.
 func (c *Config) Print() {

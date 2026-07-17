@@ -5,6 +5,20 @@ import (
 	"path/filepath"
 	"testing"
 )
+func TestLoadGCSConfig(t *testing.T) {
+	t.Setenv("DATABASE_URL", "postgres://test")
+	t.Setenv("JWT_SECRET", "secret")
+	t.Setenv("GCS_BUCKET", "my-bucket")
+
+	cfg, err := Load()
+	if err != nil {
+		t.Fatalf("Load() error = %v", err)
+	}
+
+	if cfg.GCSBucket != "my-bucket" {
+		t.Errorf("GCSBucket = %q, want %q", cfg.GCSBucket, "my-bucket")
+	}
+}
 
 func TestLoadEnvFilePreservesExistingEnvironment(t *testing.T) {
 	t.Setenv("DATABASE_URL", "postgres://from-environment")

@@ -65,9 +65,10 @@ func (r *PostgresRepository) GetByIDAndUser(ctx context.Context, id, userID uuid
 	return toDomain(record), nil
 }
 
-func (r *PostgresRepository) ListChildren(ctx context.Context, parentID uuid.UUID, limit, offset int32) ([]*content.Content, error) {
+func (r *PostgresRepository) ListChildren(ctx context.Context, parentID, userID uuid.UUID, limit, offset int32) ([]*content.Content, error) {
 	records, err := r.store.ListContentChildren(ctx, contentsqlc.ListContentChildrenParams{
 		ParentID:     toPgUUIDPtr(&parentID),
+		UserID:       toPgUUID(userID),
 		ResultLimit:  limit,
 		ResultOffset: offset,
 	})
@@ -98,6 +99,18 @@ func (r *PostgresRepository) GetByBucketAndName(ctx context.Context, bucket, obj
 }
 
 func (r *PostgresRepository) Complete(ctx context.Context, c *content.Content) error {
+	// Verify existence first to distinguish between ErrNotFound and ErrStaleGeneration
+	existing, err := r.GetByBucketAndName(ctx, c.Bucket, c.ObjectName)
+	if err != nil {
+		return err
+	}
+	
+	// Optional: Check if generation is actually stale before attempting completion if necessary
+	// though the current SQL handles it atomicity, this helps with error clarity.
+	if existing.ObjectGeneration != nil && c.ObjectGeneration != nil && *existing.ObjectGeneration > *c.ObjectGeneration {
+		return content.ErrStaleGeneration
+	}
+
 	c.UpdatedAt = time.Now()
 
 	params := contentsqlc.CompleteContentParams{
@@ -115,6 +128,7 @@ func (r *PostgresRepository) Complete(ctx context.Context, c *content.Content) e
 	record, err := r.store.CompleteContent(ctx, params)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
+			// If it existed before, this error must be due to the generation constraint
 			return content.ErrStaleGeneration
 		}
 		return fmt.Errorf("postgres complete content: %w", err)
