@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/example/reference-app/internal/config"
 	"github.com/coreos/go-oidc/v3/oidc"
+	"github.com/example/reference-app/internal/config"
 )
 
 type EventarcVerifier struct {
@@ -16,6 +16,10 @@ type EventarcVerifier struct {
 }
 
 func NewEventarcVerifier(ctx context.Context, cfg *config.Config) (*EventarcVerifier, error) {
+	if cfg.EventarcIssuer == "" {
+		return &EventarcVerifier{verifier: nil}, nil
+	}
+
 	provider, err := oidc.NewProvider(ctx, cfg.EventarcIssuer)
 	if err != nil {
 		return nil, fmt.Errorf("oidc provider: %w", err)
@@ -26,6 +30,10 @@ func NewEventarcVerifier(ctx context.Context, cfg *config.Config) (*EventarcVeri
 }
 
 func (v *EventarcVerifier) Verify(r *http.Request) error {
+	if v.verifier == nil {
+		return nil // Bypass verification in local development when no issuer is configured
+	}
+
 	authHeader := r.Header.Get("Authorization")
 	if !strings.HasPrefix(authHeader, "Bearer ") {
 		return errors.New("missing or invalid authorization header")

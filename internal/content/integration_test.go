@@ -15,10 +15,10 @@ import (
 	"testing"
 	"time"
 
+	"cloud.google.com/go/storage"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"cloud.google.com/go/storage"
 
 	"github.com/example/reference-app/internal/auth"
 	"github.com/example/reference-app/internal/content"

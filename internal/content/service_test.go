@@ -12,28 +12,40 @@ import (
 // Mocks
 
 type MockRepository struct {
-	CreateFn              func(ctx context.Context, c *Content) error
-	GetByIDAndUserFn      func(ctx context.Context, id, userID uuid.UUID) (*Content, error)
-	ListChildrenFn        func(ctx context.Context, parentID, userID uuid.UUID, limit, offset int32) ([]*Content, error)
+	CreateFn             func(ctx context.Context, c *Content) error
+	GetByIDAndUserFn     func(ctx context.Context, id, userID uuid.UUID) (*Content, error)
+	ListChildrenFn       func(ctx context.Context, parentID, userID uuid.UUID, limit, offset int32) ([]*Content, error)
 	GetByBucketAndNameFn func(ctx context.Context, bucket, objectName string) (*Content, error)
-	CompleteFn            func(ctx context.Context, c *Content) error
+	CompleteFn           func(ctx context.Context, c *Content) error
 }
 
 func (m *MockRepository) Create(ctx context.Context, c *Content) error { return m.CreateFn(ctx, c) }
-func (m *MockRepository) GetByIDAndUser(ctx context.Context, id, userID uuid.UUID) (*Content, error) { return m.GetByIDAndUserFn(ctx, id, userID) }
-func (m *MockRepository) ListChildren(ctx context.Context, parentID, userID uuid.UUID, limit, offset int32) ([]*Content, error) { return m.ListChildrenFn(ctx, parentID, userID, limit, offset) }
-func (m *MockRepository) GetByBucketAndName(ctx context.Context, bucket, objectName string) (*Content, error) { return m.GetByBucketAndNameFn(ctx, bucket, objectName) }
+func (m *MockRepository) GetByIDAndUser(ctx context.Context, id, userID uuid.UUID) (*Content, error) {
+	return m.GetByIDAndUserFn(ctx, id, userID)
+}
+func (m *MockRepository) ListChildren(ctx context.Context, parentID, userID uuid.UUID, limit, offset int32) ([]*Content, error) {
+	return m.ListChildrenFn(ctx, parentID, userID, limit, offset)
+}
+func (m *MockRepository) GetByBucketAndName(ctx context.Context, bucket, objectName string) (*Content, error) {
+	return m.GetByBucketAndNameFn(ctx, bucket, objectName)
+}
 func (m *MockRepository) Complete(ctx context.Context, c *Content) error { return m.CompleteFn(ctx, c) }
 
 type MockStorage struct {
 	GetObjectKeyFn        func(userID, contentID string, originalName string) string
-	SignUploadURLFn      func(ctx context.Context, objectName, contentType string, duration time.Duration) (string, error)
+	SignUploadURLFn       func(ctx context.Context, objectName, contentType string, duration time.Duration) (string, error)
 	GetObjectAttributesFn func(ctx context.Context, objectName string) (*storage.ObjectAttrs, error)
 }
 
-func (m *MockStorage) GetObjectKey(userID, contentID string, originalName string) string { return m.GetObjectKeyFn(userID, contentID, originalName) }
-func (m *MockStorage) SignUploadURL(ctx context.Context, objectName, contentType string, duration time.Duration) (string, error) { return m.SignUploadURLFn(ctx, objectName, contentType, duration) }
-func (m *MockStorage) GetObjectAttributes(ctx context.Context, objectName string) (*storage.ObjectAttrs, error) { return m.GetObjectAttributesFn(ctx, objectName) }
+func (m *MockStorage) GetObjectKey(userID, contentID string, originalName string) string {
+	return m.GetObjectKeyFn(userID, contentID, originalName)
+}
+func (m *MockStorage) SignUploadURL(ctx context.Context, objectName, contentType string, duration time.Duration) (string, error) {
+	return m.SignUploadURLFn(ctx, objectName, contentType, duration)
+}
+func (m *MockStorage) GetObjectAttributes(ctx context.Context, objectName string) (*storage.ObjectAttrs, error) {
+	return m.GetObjectAttributesFn(ctx, objectName)
+}
 
 // Tests
 

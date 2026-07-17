@@ -46,10 +46,10 @@ func (a *GCSAdapter) GetObjectKey(userID, contentID string, originalName string)
 
 func (a *GCSAdapter) SignUploadURL(ctx context.Context, objectName, contentType string, duration time.Duration) (string, error) {
 	opts := &storage.SignedURLOptions{
-		Scheme:         storage.SigningSchemeV4,
-		Method:         "PUT",
-		Expires:        time.Now().Add(duration),
-		ContentType:    contentType,
+		Scheme:      storage.SigningSchemeV4,
+		Method:      "PUT",
+		Expires:     time.Now().Add(duration),
+		ContentType: contentType,
 	}
 
 	return a.client.Bucket(a.bucket).SignedURL(objectName, opts)

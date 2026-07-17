@@ -13,5 +13,5 @@ func RegisterRoutes(r chi.Router, h *Handler, eh *EventarcHandler, requireBearer
 			r.Post("/", h.Reserve)
 		})
 	})
-    r.Post("/events/storage", eh.Handle)
+	r.Post("/events/storage", eh.Handle)
 }

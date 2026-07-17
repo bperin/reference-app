@@ -104,7 +104,7 @@ func (r *PostgresRepository) Complete(ctx context.Context, c *content.Content) e
 	if err != nil {
 		return err
 	}
-	
+
 	// Optional: Check if generation is actually stale before attempting completion if necessary
 	// though the current SQL handles it atomicity, this helps with error clarity.
 	if existing.ObjectGeneration != nil && c.ObjectGeneration != nil && *existing.ObjectGeneration > *c.ObjectGeneration {

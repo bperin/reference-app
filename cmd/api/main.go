@@ -16,6 +16,9 @@ import (
 	"github.com/example/reference-app/internal/auth"
 	authrepository "github.com/example/reference-app/internal/auth/repository"
 	"github.com/example/reference-app/internal/config"
+	"github.com/example/reference-app/internal/content"
+	contentrepository "github.com/example/reference-app/internal/content/repository"
+	contentsqlc "github.com/example/reference-app/internal/content/repository/sqlc"
 	"github.com/example/reference-app/internal/database"
 	"github.com/example/reference-app/internal/health"
 	"github.com/example/reference-app/internal/logging"
@@ -23,6 +26,7 @@ import (
 	postsrepository "github.com/example/reference-app/internal/posts/repository"
 	postssqlc "github.com/example/reference-app/internal/posts/repository/sqlc"
 	"github.com/example/reference-app/internal/security"
+	"github.com/example/reference-app/internal/storage"
 	"github.com/example/reference-app/internal/users"
 	usersrepository "github.com/example/reference-app/internal/users/repository"
 	userssqlc "github.com/example/reference-app/internal/users/repository/sqlc"
@@ -93,15 +97,26 @@ func run() error {
 	// 6. Initialize domain sqlc stores
 	usersStore := userssqlc.New(pool)
 	postsStore := postssqlc.New(pool)
+	contentStore := contentsqlc.New(pool)
 
 	// 6. Initialize repository adapters
 	usersRepository := usersrepository.NewPostgres(usersStore)
 	postsRepository := postsrepository.NewPostgres(postsStore)
+	contentRepository := contentrepository.NewPostgres(contentStore)
 	refreshRepository := authrepository.NewPostgres(pool)
 
 	// 7. Initialize application/domain services
 	usersService := users.NewService(usersRepository, logger)
 	postsService := posts.NewService(postsRepository, logger)
+
+	gcsAdapter, err := storage.NewGCSAdapter(context.Background(), cfg.GCSBucket, cfg.GCSCredentials)
+	if err != nil {
+		return fmt.Errorf("initialize gcs adapter: %w", err)
+	}
+	defer gcsAdapter.Close()
+
+	contentService := content.NewService(contentRepository, gcsAdapter, cfg.GCSBucket)
+
 	tokenIssuer := security.NewTokenIssuer(cfg.JWTSecret, cfg.JWTIssuer, cfg.JWTAudience, cfg.AccessTokenTTL)
 	authService := auth.NewService(
 		usersRepository,
@@ -118,6 +133,13 @@ func run() error {
 	usersHandler := users.NewHandler(usersService, logger)
 	postsHandler := posts.NewHandler(postsService, logger)
 	authHandler := auth.NewHandler(authService, logger)
+	contentHandler := content.NewHandler(contentService)
+
+	eventarcVerifier, err := auth.NewEventarcVerifier(context.Background(), cfg)
+	if err != nil {
+		return fmt.Errorf("initialize eventarc verifier: %w", err)
+	}
+	eventarcHandler := content.NewEventarcHandler(contentService, eventarcVerifier)
 
 	// 10. Construct Chi router
 	r := chi.NewRouter()
@@ -134,6 +156,7 @@ func run() error {
 	requireBearer := auth.RequireBearer(tokenIssuer)
 	users.RegisterRoutes(r, usersHandler, requireBearer)
 	posts.RegisterRoutes(r, postsHandler, requireBearer)
+	content.RegisterRoutes(r, contentHandler, eventarcHandler, requireBearer)
 
 	// 11. Start HTTP Server
 	server := &http.Server{

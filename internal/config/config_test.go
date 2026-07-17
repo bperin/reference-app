@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 )
+
 func TestLoadGCSConfig(t *testing.T) {
 	t.Setenv("DATABASE_URL", "postgres://test")
 	t.Setenv("JWT_SECRET", "secret")

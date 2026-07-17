@@ -9,15 +9,15 @@ import (
 )
 
 type Config struct {
-	AppEnv          string
-	HTTPAddress     string
-	DatabaseURL     string
-	JWTSecret       string
-	JWTIssuer       string
-	JWTAudience     string
-	AccessTokenTTL  time.Duration
-	RefreshTokenTTL time.Duration
-	LogLevel        string
+	AppEnv           string
+	HTTPAddress      string
+	DatabaseURL      string
+	JWTSecret        string
+	JWTIssuer        string
+	JWTAudience      string
+	AccessTokenTTL   time.Duration
+	RefreshTokenTTL  time.Duration
+	LogLevel         string
 	GCSBucket        string
 	GCSCredentials   string
 	EventarcAudience string
@@ -70,7 +70,6 @@ func Load() (*Config, error) {
 
 	return cfg, nil
 }
-
 
 // Print logs the configuration with sensitive values redacted.
 func (c *Config) Print() {

@@ -126,467 +126,467 @@ paths:
   /auth/oauth/revoke:
     post:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: Refresh token payload
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/auth.RevokeRequest'
+        - description: Refresh token payload
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: '#/definitions/auth.RevokeRequest'
       produces:
-      - application/json
+        - application/json
       responses:
-        "204":
+        '204':
           description: No Content
-        "400":
+        '400':
           description: Bad Request
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "500":
+        '500':
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorPayload'
       summary: Revoke a refresh token
       tags:
-      - auth
+        - auth
   /auth/oauth/token:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Supports password (username, password, optional scope) and refresh_token
         (refresh_token) grants.
       parameters:
-      - description: OAuth2 grant payload
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/auth.TokenRequest'
+        - description: OAuth2 grant payload
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: '#/definitions/auth.TokenRequest'
       produces:
-      - application/json
+        - application/json
       responses:
-        "200":
+        '200':
           description: OK
           schema:
             $ref: '#/definitions/auth.TokenResponse'
-        "400":
+        '400':
           description: Bad Request
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "401":
+        '401':
           description: Unauthorized
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "500":
+        '500':
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorPayload'
       summary: Exchange an OAuth2 token grant
       tags:
-      - auth
+        - auth
   /auth/register:
     post:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: Registration payload
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/auth.RegisterRequest'
+        - description: Registration payload
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: '#/definitions/auth.RegisterRequest'
       produces:
-      - application/json
+        - application/json
       responses:
-        "201":
+        '201':
           description: Created
           schema:
             $ref: '#/definitions/auth.RegisterResponse'
-        "400":
+        '400':
           description: Bad Request
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "409":
+        '409':
           description: Conflict
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "500":
+        '500':
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorPayload'
       summary: Register a user
       tags:
-      - auth
+        - auth
   /contents:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Reserves a new content upload with MIME type and hierarchy.
       parameters:
-      - description: Reservation request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/content.reserveRequest'
+        - description: Reservation request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: '#/definitions/content.reserveRequest'
       produces:
-      - application/json
+        - application/json
       responses:
-        "201":
+        '201':
           description: Reservation details
           schema:
             additionalProperties: true
             type: object
-        "400":
+        '400':
           description: Invalid request
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "401":
+        '401':
           description: Unauthorized
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "500":
+        '500':
           description: Internal server error
           schema:
             $ref: '#/definitions/response.ErrorPayload'
       summary: Reserve content upload
       tags:
-      - content
+        - content
   /events/storage:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Endpoint for Eventarc to report finalized GCS uploads. Authenticated
         via Google OIDC machine tokens.
       parameters:
-      - description: CloudEvent payload containing GCS bucket and object name
-        in: body
-        name: request
-        required: true
-        schema:
-          additionalProperties: true
-          type: object
+        - description: CloudEvent payload containing GCS bucket and object name
+          in: body
+          name: request
+          required: true
+          schema:
+            additionalProperties: true
+            type: object
       produces:
-      - application/json
+        - application/json
       responses:
-        "204":
+        '204':
           description: Upload marked complete
-        "400":
+        '400':
           description: Invalid request
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "401":
+        '401':
           description: Unauthorized
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "500":
+        '500':
           description: Internal server error
           schema:
             $ref: '#/definitions/response.ErrorPayload'
       summary: Eventarc Cloud Storage Callback
       tags:
-      - content
+        - content
   /posts/:
     get:
       parameters:
-      - description: Maximum number of posts
-        in: query
-        name: limit
-        type: integer
-      - description: Pagination offset
-        in: query
-        name: offset
-        type: integer
+        - description: Maximum number of posts
+          in: query
+          name: limit
+          type: integer
+        - description: Pagination offset
+          in: query
+          name: offset
+          type: integer
       produces:
-      - application/json
+        - application/json
       responses:
-        "200":
+        '200':
           description: OK
           schema:
             items:
               $ref: '#/definitions/posts.PostResponse'
             type: array
-        "500":
+        '500':
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorPayload'
       summary: List published posts
       tags:
-      - posts
+        - posts
     post:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: Post payload
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/posts.CreatePostRequest'
+        - description: Post payload
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: '#/definitions/posts.CreatePostRequest'
       produces:
-      - application/json
+        - application/json
       responses:
-        "201":
+        '201':
           description: Created
           schema:
             $ref: '#/definitions/posts.PostResponse'
-        "400":
+        '400':
           description: Bad Request
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "401":
+        '401':
           description: Unauthorized
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "500":
+        '500':
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorPayload'
       security:
-      - OAuth2Auth:
-        - user
+        - OAuth2Auth:
+            - user
       summary: Create a post
       tags:
-      - posts
+        - posts
   /posts/{postID}:
     delete:
       parameters:
-      - description: Post UUID
-        in: path
-        name: postID
-        required: true
-        type: string
+        - description: Post UUID
+          in: path
+          name: postID
+          required: true
+          type: string
       responses:
-        "204":
+        '204':
           description: No Content
-        "400":
+        '400':
           description: Bad Request
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "401":
+        '401':
           description: Unauthorized
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "403":
+        '403':
           description: Forbidden
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "404":
+        '404':
           description: Not Found
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "500":
+        '500':
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorPayload'
       security:
-      - OAuth2Auth:
-        - user
+        - OAuth2Auth:
+            - user
       summary: Delete a post
       tags:
-      - posts
+        - posts
     get:
       parameters:
-      - description: Post UUID
-        in: path
-        name: postID
-        required: true
-        type: string
+        - description: Post UUID
+          in: path
+          name: postID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
-        "200":
+        '200':
           description: OK
           schema:
             $ref: '#/definitions/posts.PostResponse'
-        "400":
+        '400':
           description: Bad Request
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "404":
+        '404':
           description: Not Found
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "500":
+        '500':
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorPayload'
       summary: Get a post
       tags:
-      - posts
+        - posts
     put:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: Post UUID
-        in: path
-        name: postID
-        required: true
-        type: string
-      - description: Post payload
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/posts.UpdatePostRequest'
+        - description: Post UUID
+          in: path
+          name: postID
+          required: true
+          type: string
+        - description: Post payload
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: '#/definitions/posts.UpdatePostRequest'
       produces:
-      - application/json
+        - application/json
       responses:
-        "200":
+        '200':
           description: OK
           schema:
             $ref: '#/definitions/posts.PostResponse'
-        "400":
+        '400':
           description: Bad Request
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "401":
+        '401':
           description: Unauthorized
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "403":
+        '403':
           description: Forbidden
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "404":
+        '404':
           description: Not Found
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "500":
+        '500':
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorPayload'
       security:
-      - OAuth2Auth:
-        - user
+        - OAuth2Auth:
+            - user
       summary: Update a post
       tags:
-      - posts
+        - posts
   /posts/{postID}/publish:
     post:
       parameters:
-      - description: Post UUID
-        in: path
-        name: postID
-        required: true
-        type: string
+        - description: Post UUID
+          in: path
+          name: postID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
-        "200":
+        '200':
           description: OK
           schema:
             $ref: '#/definitions/posts.PostResponse'
-        "400":
+        '400':
           description: Bad Request
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "401":
+        '401':
           description: Unauthorized
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "403":
+        '403':
           description: Forbidden
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "404":
+        '404':
           description: Not Found
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "500":
+        '500':
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorPayload'
       security:
-      - OAuth2Auth:
-        - user
+        - OAuth2Auth:
+            - user
       summary: Publish a post
       tags:
-      - posts
+        - posts
   /users/me:
     delete:
       responses:
-        "204":
+        '204':
           description: No Content
-        "401":
+        '401':
           description: Unauthorized
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "500":
+        '500':
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorPayload'
       security:
-      - OAuth2Auth:
-        - user
+        - OAuth2Auth:
+            - user
       summary: Delete the current user
       tags:
-      - users
+        - users
     get:
       produces:
-      - application/json
+        - application/json
       responses:
-        "200":
+        '200':
           description: OK
           schema:
             $ref: '#/definitions/users.UserResponse'
-        "401":
+        '401':
           description: Unauthorized
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "404":
+        '404':
           description: Not Found
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "500":
+        '500':
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorPayload'
       security:
-      - OAuth2Auth:
-        - user
+        - OAuth2Auth:
+            - user
       summary: Get the current user
       tags:
-      - users
+        - users
     put:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: Profile update payload
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/users.UpdateProfileRequest'
+        - description: Profile update payload
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: '#/definitions/users.UpdateProfileRequest'
       produces:
-      - application/json
+        - application/json
       responses:
-        "200":
+        '200':
           description: OK
           schema:
             $ref: '#/definitions/users.UserResponse'
-        "400":
+        '400':
           description: Bad Request
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "401":
+        '401':
           description: Unauthorized
           schema:
             $ref: '#/definitions/response.ErrorPayload'
-        "500":
+        '500':
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorPayload'
       security:
-      - OAuth2Auth:
-        - user
+        - OAuth2Auth:
+            - user
       summary: Update the current user
       tags:
-      - users
+        - users
 schemes:
-- http
-- https
+  - http
+  - https
 securityDefinitions:
   OAuth2Auth:
     flow: password
@@ -594,4 +594,4 @@ securityDefinitions:
       user: Access the authenticated user's profile and posts.
     tokenUrl: /auth/oauth/token
     type: oauth2
-swagger: "2.0"
+swagger: '2.0'
